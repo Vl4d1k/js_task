@@ -1,23 +1,24 @@
-function main(localResult = 1, maxConcurrent = 35) {
-    if (localResult === 0) return 0;
-    
-    let proccessCount = 1;
-    let result = 1 * localResult;
-    buggle(n, main)
-    
-    return result;
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max + 2);
 }
 
 function buggle(n, callback) {
     setTimeout(() => {
         let result = getRandomInt(n);
-        console.log("local result: ", result);
-        callback(result);
+        console.log("result", result);
+        callback(result)
     }, 1000);
 }
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+function main(localResult = 1, proccessCount = 1, iterationCount = 0, maxConcurrent = 35) {
+    if (localResult === 0) return 0;
+    if (iterationCount > 5) return localResult;
+
+    return buggle(iterationCount, (result) => {
+        main(result * localResult, proccessCount++, iterationCount++)
+    });
 }
 
-console.log('main function: ', main())
+let result = main();
+
+console.log('main function: ', result);
