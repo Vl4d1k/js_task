@@ -1,13 +1,13 @@
 const MAX_CONCURRENT = 35;
 
-let range = (n) => [...Array(n).keys()];
-
 function fork(async_calls, shared_callback) {
     var counter = async_calls.length;
     var all_results = [];
+
     function makeCallback(index) {
         return function () {
             counter--;
+            console.log(counter)
             var results = [];
             for (var i = 0; i < arguments.length; i++) {
                 results.push(arguments[i]);
@@ -25,14 +25,18 @@ function fork(async_calls, shared_callback) {
 }
 
 function A (c) { buggle(1, c) };
-function B (c) { buggle(2, c) };
-function C (c) { buggle(3, c) };
 
 function D (result) {
   console.log('result IN D FUNCTION: ', result);
 }
 
-fork([A,B,C],D);
+const createArray = length => Array.from(
+    { length },
+    (_, i) => function(callback) { buggle(i, callback) }
+  )
+
+
+fork(createArray(15), D);
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max + 1);
@@ -42,8 +46,9 @@ function buggle(n, callback) {
     setTimeout(() => {
         let result = getRandomInt(n);
         console.log("result: ", result);
+        console.log("n: ", n);
         callback(result);
-    }, getRandomInt(2500));
+    }, getRandomInt(1));
 }
 
 function callbackFunction(
